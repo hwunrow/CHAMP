@@ -249,10 +249,9 @@ def comp_points(pt1,pt2):
     return True
 
 def point_comparator(pt1, pt2):
-    assert len(pt1)==len(pt2),"dimension of points must match"
+    assert len(pt1)==len(pt2), "dimension of points must match"
     origin=np.zeros(len(pt1))
     assert len(pt1)==len(origin), "dimension of supplied origin must match points"
-
     v1=pt1-origin
     d1=np.dot(v1,v1)
     v2 = pt2 - origin
@@ -261,7 +260,7 @@ def point_comparator(pt1, pt2):
         return 0
     elif d1>d2:
         return 1
-    elif d2<d1:
+    elif d1<d2:
         return -1
 
 
@@ -600,4 +599,3 @@ def get_expected_edges_ml(part_obj,layer_vec,weight='weight'):
 		cpartobj=ig.VertexClustering(graph=subgraph,membership=submem)
 		P_tot += get_expected_edges(cpartobj,weight=weight,directed=subgraph.is_directed())
 	return P_tot
-

@@ -32,6 +32,7 @@ import numpy as np
 import h5py
 import copy
 import sklearn.metrics as skm
+from functools import cmp_to_key
 import warnings
 import logging
 from time import time
@@ -393,7 +394,7 @@ sub
 						# print (newshape,myfile[attribute].shape)
 						# print(oshape,file_2_add[attribute].shape)
 						myfile[attribute][cshape[0]:cshape[0] + newshape[0], :] = file_2_add[attribute]
-						
+
 	def _append_partitions_hdf5_file(self,partitions):
 		'''
 
@@ -482,7 +483,7 @@ sub
 
 	def _add_partitions_fast(self,listofparts,maxpt=None):
 		"""assumes all coefficients are calculated in each part dict \
-		  and that this is the initialization of a PartitionEnsemble 
+		  and that this is the initialization of a PartitionEnsemble
 		  object with partitions being passed in"""
 		t=time()
 		if self.ismultilayer:
@@ -510,7 +511,7 @@ sub
 
 		t = time()
 		self.apply_CHAMP(maxpt=self.maxpt)
-		
+
 		logging.debug("time applying CHAMP:{:.3f}".format(time() - t))
 		if self.calc_sim_mat:  # otherwise this doesn't get calculated by default
 			t = time()
@@ -728,7 +729,7 @@ sub
 			#note that we save self here and not the new object
 			shutil.copy(self._hdf5_file, newEnsemble._hdf5_file)
 			# self.save(rename_existing=False)
-		
+
 		return newEnsemble
 
 	def merge_ensemble(self,otherEnsemble,new=True):
@@ -1066,9 +1067,7 @@ sub
 			inds.sort(key=lambda x: x[1])
 		else:
 			inds=list(zip(self.ind2doms.keys(),[ min_dist_origin(val) for val in self.ind2doms.values()]))
-
-			inds.sort(key=lambda x: x[0],
-					  cmp=lambda x,y: point_comparator(x,y) )
+			inds.sort(key=cmp_to_key(lambda x,y: point_comparator(x[1],y[1])))
 
 		# retreive index
 		return [ind[0] for ind in inds]
@@ -1516,7 +1515,7 @@ sub
 							  alpha=1, label=r'\# communities ($\ge %d$ nodes)'%(self._min_com_size),
 							  zorder=1)
 			#	 sct2.set_path_effects([path_effects.SimplePatchShadow(alpha=.5),path_effects.Normal()])
-	
+
 			# fake for legend with larger marker size
 			mk3 = a2.scatter([], [], marker="^", color="#91AEC1", alpha=1,
 							 label=r'\# communities ($\ge %d$)'%(self._min_com_size),
